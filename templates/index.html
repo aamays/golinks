@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Links</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; color: #333; }
+        h1 { margin-bottom: 24px; font-size: 24px; }
+        .add-form { display: flex; gap: 8px; margin-bottom: 24px; }
+        .add-form input { padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        .add-form input[name="phrase"] { width: 150px; }
+        .add-form input[name="url"] { flex: 1; }
+        button { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; }
+        .btn-add { background: #2563eb; color: white; }
+        .btn-add:hover { background: #1d4ed8; }
+        .btn-edit { background: #f3f4f6; color: #333; }
+        .btn-edit:hover { background: #e5e7eb; }
+        .btn-delete { background: #fee2e2; color: #dc2626; }
+        .btn-delete:hover { background: #fecaca; }
+        .btn-save { background: #22c55e; color: white; }
+        .btn-save:hover { background: #16a34a; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { font-weight: 600; color: #6b7280; font-size: 12px; text-transform: uppercase; }
+        td.actions { white-space: nowrap; text-align: right; }
+        td.actions button { margin-left: 4px; }
+        .phrase-link { color: #2563eb; text-decoration: none; font-weight: 500; }
+        .phrase-link:hover { text-decoration: underline; }
+        .url-text { color: #6b7280; font-size: 13px; word-break: break-all; }
+        .edit-input { width: 100%; padding: 6px 8px; border: 1px solid #2563eb; border-radius: 4px; font-size: 13px; }
+        .empty { text-align: center; padding: 40px; color: #9ca3af; }
+    </style>
+</head>
+<body>
+    <h1>Go Links</h1>
+
+    <form class="add-form" onsubmit="return addLink(event)">
+        <input type="text" name="phrase" placeholder="phrase" required>
+        <input type="url" name="url" placeholder="https://example.com" required>
+        <button type="submit" class="btn-add">Add</button>
+    </form>
+
+    <table>
+        <thead>
+            <tr><th>Link</th><th>Destination</th><th></th></tr>
+        </thead>
+        <tbody id="links">
+            {{range .}}
+            <tr data-phrase="{{.Phrase}}">
+                <td><a class="phrase-link" href="/{{.Phrase}}">go/{{.Phrase}}</a></td>
+                <td class="url-cell"><span class="url-text">{{.URL}}</span></td>
+                <td class="actions">
+                    <button class="btn-edit" onclick="editLink(this)">Edit</button>
+                    <button class="btn-delete" onclick="deleteLink('{{.Phrase}}')">Delete</button>
+                </td>
+            </tr>
+            {{else}}
+            <tr class="empty-row"><td colspan="3" class="empty">No links yet. Add one above.</td></tr>
+            {{end}}
+        </tbody>
+    </table>
+
+    <script>
+        async function addLink(e) {
+            e.preventDefault();
+            const form = e.target;
+            const phrase = form.phrase.value.trim();
+            const url = form.url.value.trim();
+            const res = await fetch('/_/api/links', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({phrase, url})
+            });
+            if (res.ok) location.reload();
+            else alert(await res.text());
+        }
+
+        async function deleteLink(phrase) {
+            if (!confirm('Delete go/' + phrase + '?')) return;
+            const res = await fetch('/_/api/links/' + encodeURIComponent(phrase), {method: 'DELETE'});
+            if (res.ok) location.reload();
+            else alert(await res.text());
+        }
+
+        function editLink(btn) {
+            const row = btn.closest('tr');
+            const urlCell = row.querySelector('.url-cell');
+            const currentUrl = urlCell.querySelector('.url-text').textContent;
+            const phrase = row.dataset.phrase;
+
+            urlCell.innerHTML = '<input class="edit-input" value="' + currentUrl + '">';
+            const input = urlCell.querySelector('input');
+            input.focus();
+
+            const actions = row.querySelector('.actions');
+            actions.innerHTML = '<button class="btn-save" onclick="saveLink(\'' + phrase + '\', this)">Save</button>';
+        }
+
+        async function saveLink(phrase, btn) {
+            const row = btn.closest('tr');
+            const newUrl = row.querySelector('.edit-input').value.trim();
+            const res = await fetch('/_/api/links/' + encodeURIComponent(phrase), {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({url: newUrl})
+            });
+            if (res.ok) location.reload();
+            else alert(await res.text());
+        }
+    </script>
+</body>
+</html>
