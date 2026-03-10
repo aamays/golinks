@@ -6,16 +6,13 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 )
 
 func main() {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
+	linksPath := os.Getenv("GOLINKS_DATA")
+	if linksPath == "" {
+		linksPath = "/usr/local/etc/golinks/links.json"
 	}
-
-	linksPath := filepath.Join(home, ".config", "golinks", "links.json")
 	store, err := NewLinkStore(linksPath)
 	if err != nil {
 		log.Fatalf("Failed to load links: %v", err)
