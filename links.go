@@ -82,7 +82,11 @@ func (s *LinkStore) Add(phrase, url string) error {
 	}
 
 	s.links[phrase] = url
-	return s.save()
+	if err := s.save(); err != nil {
+		delete(s.links, phrase)
+		return err
+	}
+	return nil
 }
 
 // Update modifies an existing link. Returns error if phrase not found.
@@ -90,12 +94,17 @@ func (s *LinkStore) Update(phrase, url string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if _, exists := s.links[phrase]; !exists {
+	old, exists := s.links[phrase]
+	if !exists {
 		return fmt.Errorf("phrase %q not found", phrase)
 	}
 
 	s.links[phrase] = url
-	return s.save()
+	if err := s.save(); err != nil {
+		s.links[phrase] = old
+		return err
+	}
+	return nil
 }
 
 // Delete removes a link. Returns error if phrase not found.
@@ -103,12 +112,17 @@ func (s *LinkStore) Delete(phrase string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if _, exists := s.links[phrase]; !exists {
+	old, exists := s.links[phrase]
+	if !exists {
 		return fmt.Errorf("phrase %q not found", phrase)
 	}
 
 	delete(s.links, phrase)
-	return s.save()
+	if err := s.save(); err != nil {
+		s.links[phrase] = old
+		return err
+	}
+	return nil
 }
 
 func (s *LinkStore) save() error {
@@ -116,5 +130,9 @@ func (s *LinkStore) save() error {
 	if err != nil {
 		return fmt.Errorf("marshal links: %w", err)
 	}
-	return os.WriteFile(s.path, data, 0644)
+	tmp := s.path + ".tmp"
+	if err := os.WriteFile(tmp, data, 0644); err != nil {
+		return fmt.Errorf("write temp file: %w", err)
+	}
+	return os.Rename(tmp, s.path)
 }
