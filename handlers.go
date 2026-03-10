@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 	"strings"
 )
@@ -32,6 +33,10 @@ func NewServer(store *LinkStore) http.Handler {
 			}
 			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
+			}
+			if req.URL == "" {
+				http.Error(w, "url required", http.StatusBadRequest)
 				return
 			}
 			if err := store.Update(phrase, req.URL); err != nil {
@@ -80,7 +85,9 @@ func NewServer(store *LinkStore) http.Handler {
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			indexTmpl.Execute(w, store.All())
+			if err := indexTmpl.Execute(w, store.All()); err != nil {
+				log.Printf("template execute error: %v", err)
+			}
 			return
 		}
 
