@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"sync"
 )
 
@@ -14,6 +15,13 @@ import (
 type Link struct {
 	Phrase string `json:"phrase"`
 	URL    string `json:"url"`
+}
+
+// ScoredLink is a link with a relevance score for suggestion ranking.
+type ScoredLink struct {
+	Phrase   string
+	URL      string
+	Distance int
 }
 
 // LinkStore manages go-links backed by a JSON file.
@@ -70,6 +78,61 @@ func (s *LinkStore) All() []Link {
 		return links[i].Phrase < links[j].Phrase
 	})
 	return links
+}
+
+// Suggest returns up to 5 links that fuzzy-match the given phrase,
+// using substring matching and Levenshtein edit distance.
+func (s *LinkStore) Suggest(phrase string) []ScoredLink {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	type candidate struct {
+		phrase   string
+		url      string
+		distance int
+		isSub    bool
+	}
+
+	var candidates []candidate
+	lowerPhrase := strings.ToLower(phrase)
+
+	for p, u := range s.links {
+		lowerP := strings.ToLower(p)
+		dist := levenshtein(lowerPhrase, lowerP)
+		isSub := strings.Contains(lowerPhrase, lowerP) || strings.Contains(lowerP, lowerPhrase)
+
+		// Include if substring match or edit distance is reasonable
+		maxDist := len(phrase)
+		if maxDist < 4 {
+			maxDist = 4
+		}
+		if isSub || dist <= maxDist/2+1 {
+			candidates = append(candidates, candidate{p, u, dist, isSub})
+		}
+	}
+
+	// Sort: substring matches first, then by distance
+	sort.Slice(candidates, func(i, j int) bool {
+		if candidates[i].isSub != candidates[j].isSub {
+			return candidates[i].isSub
+		}
+		return candidates[i].distance < candidates[j].distance
+	})
+
+	limit := 5
+	if len(candidates) < limit {
+		limit = len(candidates)
+	}
+
+	results := make([]ScoredLink, limit)
+	for i := 0; i < limit; i++ {
+		results[i] = ScoredLink{
+			Phrase:   candidates[i].phrase,
+			URL:      candidates[i].url,
+			Distance: candidates[i].distance,
+		}
+	}
+	return results
 }
 
 // Add creates a new link. Returns error if phrase already exists.

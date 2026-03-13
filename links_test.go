@@ -2,6 +2,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -138,6 +139,54 @@ func TestCreatesDirIfMissing(t *testing.T) {
 	if _, err := os.Stat(filepath.Dir(path)); os.IsNotExist(err) {
 		t.Fatal("expected parent directories to be created")
 	}
+}
+
+func TestSuggest(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "links.json")
+	store, _ := NewLinkStore(path)
+
+	store.Add("docs", "https://docs.google.com")
+	store.Add("drive", "https://drive.google.com")
+	store.Add("mail", "https://mail.google.com")
+	store.Add("meet", "https://meet.google.com")
+
+	t.Run("substring match", func(t *testing.T) {
+		results := store.Suggest("mydocs")
+		if len(results) == 0 {
+			t.Fatal("expected suggestions for 'mydocs'")
+		}
+		if results[0].Phrase != "docs" {
+			t.Fatalf("expected 'docs' as top suggestion, got %q", results[0].Phrase)
+		}
+	})
+
+	t.Run("edit distance match", func(t *testing.T) {
+		results := store.Suggest("dcos")
+		if len(results) == 0 {
+			t.Fatal("expected suggestions for 'dcos'")
+		}
+		if results[0].Phrase != "docs" {
+			t.Fatalf("expected 'docs' as top suggestion, got %q", results[0].Phrase)
+		}
+	})
+
+	t.Run("no match returns empty", func(t *testing.T) {
+		results := store.Suggest("zzzzzzzzz")
+		if len(results) != 0 {
+			t.Fatalf("expected no suggestions, got %d", len(results))
+		}
+	})
+
+	t.Run("max 5 results", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			store.Add(fmt.Sprintf("d%d", i), "https://example.com")
+		}
+		results := store.Suggest("d")
+		if len(results) > 5 {
+			t.Fatalf("expected at most 5 suggestions, got %d", len(results))
+		}
+	})
 }
 
 func TestLevenshtein(t *testing.T) {
