@@ -139,3 +139,24 @@ func TestCreatesDirIfMissing(t *testing.T) {
 		t.Fatal("expected parent directories to be created")
 	}
 }
+
+func TestLevenshtein(t *testing.T) {
+	tests := []struct {
+		a, b string
+		want int
+	}{
+		{"", "", 0},
+		{"abc", "", 3},
+		{"", "abc", 3},
+		{"abc", "abc", 0},
+		{"docs", "dcos", 2},
+		{"mydocs", "docs", 2},
+		{"kitten", "sitting", 3},
+	}
+	for _, tt := range tests {
+		got := levenshtein(tt.a, tt.b)
+		if got != tt.want {
+			t.Errorf("levenshtein(%q, %q) = %d, want %d", tt.a, tt.b, got, tt.want)
+		}
+	}
+}
