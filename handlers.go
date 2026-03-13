@@ -13,7 +13,19 @@ import (
 //go:embed templates/index.html
 var indexHTML string
 
+//go:embed templates/suggest.html
+var suggestHTML string
+
 var indexTmpl = template.Must(template.New("index").Parse(indexHTML))
+var suggestTmpl = template.Must(template.New("suggest").Parse(suggestHTML))
+
+type suggestData struct {
+	Query          string
+	Suggestions    []ScoredLink
+	AutoRedirect   bool
+	RedirectPhrase string
+	RedirectURL    string
+}
 
 // NewServer creates an http.Handler with all routes configured.
 func NewServer(store *LinkStore) http.Handler {
@@ -94,11 +106,29 @@ func NewServer(store *LinkStore) http.Handler {
 		// Redirect handler
 		phrase := strings.TrimPrefix(r.URL.Path, "/")
 		url, ok := store.Get(phrase)
-		if !ok {
-			http.NotFound(w, r)
+		if ok {
+			http.Redirect(w, r, url, http.StatusFound)
 			return
 		}
-		http.Redirect(w, r, url, http.StatusFound)
+
+		// Suggestion handler
+		suggestions := store.Suggest(phrase)
+		data := suggestData{
+			Query:       phrase,
+			Suggestions: suggestions,
+		}
+
+		// Auto-redirect if single high-confidence match (edit distance <= 2)
+		if len(suggestions) == 1 && suggestions[0].Distance <= 2 {
+			data.AutoRedirect = true
+			data.RedirectPhrase = suggestions[0].Phrase
+			data.RedirectURL = suggestions[0].URL
+		}
+
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		if err := suggestTmpl.Execute(w, data); err != nil {
+			log.Printf("suggest template execute error: %v", err)
+		}
 	})
 
 	return mux

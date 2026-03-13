@@ -45,8 +45,56 @@ func TestHandleRedirectNotFound(t *testing.T) {
 	w := httptest.NewRecorder()
 	handler.ServeHTTP(w, req)
 
-	if w.Code != http.StatusNotFound {
-		t.Fatalf("expected 404, got %d", w.Code)
+	// Now returns 200 with suggestions page instead of 404
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	body := w.Body.String()
+	if !strings.Contains(body, "Not Found") {
+		t.Fatal("expected suggestions page with 'Not Found' text")
+	}
+}
+
+func TestHandleSuggestionsWithMatches(t *testing.T) {
+	store := testStore(t)
+	store.Add("docs", "https://docs.google.com")
+	handler := NewServer(store)
+
+	req := httptest.NewRequest("GET", "/mydocs", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	body := w.Body.String()
+	if !strings.Contains(body, "go/docs") {
+		t.Fatal("expected suggestion 'go/docs' in response body")
+	}
+	if !strings.Contains(body, "Did you mean") {
+		t.Fatal("expected 'Did you mean' text")
+	}
+}
+
+func TestHandleAutoRedirect(t *testing.T) {
+	store := testStore(t)
+	store.Add("docs", "https://docs.google.com")
+	handler := NewServer(store)
+
+	// "doc" is edit distance 1 from "docs" -> should auto-redirect
+	req := httptest.NewRequest("GET", "/doc", nil)
+	w := httptest.NewRecorder()
+	handler.ServeHTTP(w, req)
+
+	if w.Code != http.StatusOK {
+		t.Fatalf("expected 200, got %d", w.Code)
+	}
+	body := w.Body.String()
+	if !strings.Contains(body, "Redirecting to") {
+		t.Fatal("expected auto-redirect message")
+	}
+	if !strings.Contains(body, `meta http-equiv="refresh"`) {
+		t.Fatal("expected meta refresh tag for auto-redirect")
 	}
 }
 
