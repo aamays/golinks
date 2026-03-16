@@ -2,6 +2,8 @@
 
 A local go-link server for macOS. Type `go/gh` in your browser and get redirected to GitHub (or wherever you configure).
 
+![Go Links Demo](docs/demo.gif)
+
 ## ✨ Features
 
 - 🚀 **Short links** -- `go/<phrase>` redirects to any URL you configure
