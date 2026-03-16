@@ -95,7 +95,7 @@ func NewServer(store *LinkStore) http.Handler {
 	})
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/" {
+		if r.URL.Path == "/" || r.URL.Path == "/links" {
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
 			if err := indexTmpl.Execute(w, store.All()); err != nil {
 				log.Printf("template execute error: %v", err)
