@@ -1,0 +1,121 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #0a0a0f;
+    --text: #e2e8f0;
+    --text-heading: #f1f5f9;
+    --text-muted: #64748b;
+    --text-faint: #475569;
+    --text-secondary: #94a3b8;
+    --accent: #c4b5fd;
+    --accent-hover: #e9d5ff;
+    --accent-soft: #a78bfa;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --row-hover: rgba(255, 255, 255, 0.02);
+    --row-border: rgba(255, 255, 255, 0.04);
+    --th-border: rgba(255, 255, 255, 0.06);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus: rgba(139, 92, 246, 0.5);
+    --input-focus-ring: rgba(139, 92, 246, 0.15);
+    --edit-border: rgba(139, 92, 246, 0.4);
+    --btn-edit-bg: rgba(255, 255, 255, 0.06);
+    --btn-edit-border: rgba(255, 255, 255, 0.08);
+    --btn-edit-text: #94a3b8;
+    --btn-edit-hover-bg: rgba(255, 255, 255, 0.1);
+    --btn-edit-hover-text: #e2e8f0;
+    --btn-del-bg: rgba(239, 68, 68, 0.1);
+    --btn-del-text: #f87171;
+    --btn-del-border: rgba(239, 68, 68, 0.15);
+    --btn-del-hover-bg: rgba(239, 68, 68, 0.2);
+    --suggestion-bg: rgba(255, 255, 255, 0.03);
+    --suggestion-border: rgba(255, 255, 255, 0.06);
+    --suggestion-hover-bg: rgba(255, 255, 255, 0.07);
+    --suggestion-hover-border: rgba(139, 92, 246, 0.3);
+    --spinner-border: rgba(167, 139, 250, 0.3);
+    --gradient-1: rgba(99, 102, 241, 0.15);
+    --gradient-2: rgba(139, 92, 246, 0.1);
+    --gradient-3: rgba(59, 130, 246, 0.08);
+}
+
+:root.light {
+    --bg: #f8fafc;
+    --text: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --text-faint: #94a3b8;
+    --text-secondary: #475569;
+    --accent: #7c3aed;
+    --accent-hover: #6d28d9;
+    --accent-soft: #8b5cf6;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --row-hover: rgba(0, 0, 0, 0.02);
+    --row-border: rgba(0, 0, 0, 0.05);
+    --th-border: rgba(0, 0, 0, 0.08);
+    --input-bg: rgba(0, 0, 0, 0.03);
+    --input-border: rgba(0, 0, 0, 0.1);
+    --input-focus: rgba(124, 58, 237, 0.5);
+    --input-focus-ring: rgba(124, 58, 237, 0.12);
+    --edit-border: rgba(124, 58, 237, 0.4);
+    --btn-edit-bg: rgba(0, 0, 0, 0.04);
+    --btn-edit-border: rgba(0, 0, 0, 0.08);
+    --btn-edit-text: #64748b;
+    --btn-edit-hover-bg: rgba(0, 0, 0, 0.08);
+    --btn-edit-hover-text: #334155;
+    --btn-del-bg: rgba(239, 68, 68, 0.08);
+    --btn-del-text: #dc2626;
+    --btn-del-border: rgba(239, 68, 68, 0.15);
+    --btn-del-hover-bg: rgba(239, 68, 68, 0.15);
+    --suggestion-bg: rgba(0, 0, 0, 0.02);
+    --suggestion-border: rgba(0, 0, 0, 0.06);
+    --suggestion-hover-bg: rgba(0, 0, 0, 0.04);
+    --suggestion-hover-border: rgba(124, 58, 237, 0.3);
+    --spinner-border: rgba(124, 58, 237, 0.3);
+    --gradient-1: rgba(99, 102, 241, 0.08);
+    --gradient-2: rgba(139, 92, 246, 0.05);
+    --gradient-3: rgba(59, 130, 246, 0.04);
+}
+
+body {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+}
+body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, var(--gradient-1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, var(--gradient-2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, var(--gradient-3) 0%, transparent 50%);
+    z-index: 0;
+}
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+}
+.theme-toggle {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.15s;
+    color: var(--text);
+}
+.theme-toggle:hover {
+    background: var(--btn-edit-hover-bg);
+    transform: translateY(-1px);
+}
