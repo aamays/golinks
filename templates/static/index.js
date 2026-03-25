@@ -10,6 +10,12 @@ function updateToggleIcon() {
     btn.textContent = isLight ? '\u2600\uFE0F' : '\uD83C\uDF19';
 }
 updateToggleIcon();
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('theme')) {
+        document.documentElement.classList.toggle('light', e.matches);
+        updateToggleIcon();
+    }
+});
 
 async function addLink(e) {
     e.preventDefault();

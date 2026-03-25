@@ -11,7 +11,11 @@
 </head>
 <body>
     <script>
-        if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light');
+        (function() {
+            var saved = localStorage.getItem('theme');
+            var isLight = saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (isLight) document.documentElement.classList.add('light');
+        })();
     </script>
     <div class="container">
         <div class="glass-card">
