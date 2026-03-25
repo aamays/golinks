@@ -1,10 +1,86 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #0a0a0f;
+    --text: #e2e8f0;
+    --text-heading: #f1f5f9;
+    --text-muted: #64748b;
+    --text-faint: #475569;
+    --text-secondary: #94a3b8;
+    --accent: #c4b5fd;
+    --accent-hover: #e9d5ff;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --row-hover: rgba(255, 255, 255, 0.02);
+    --row-border: rgba(255, 255, 255, 0.04);
+    --th-border: rgba(255, 255, 255, 0.06);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus: rgba(139, 92, 246, 0.5);
+    --input-focus-ring: rgba(139, 92, 246, 0.15);
+    --edit-border: rgba(139, 92, 246, 0.4);
+    --btn-edit-bg: rgba(255, 255, 255, 0.06);
+    --btn-edit-border: rgba(255, 255, 255, 0.08);
+    --btn-edit-text: #94a3b8;
+    --btn-edit-hover-bg: rgba(255, 255, 255, 0.1);
+    --btn-edit-hover-text: #e2e8f0;
+    --btn-del-bg: rgba(239, 68, 68, 0.1);
+    --btn-del-text: #f87171;
+    --btn-del-border: rgba(239, 68, 68, 0.15);
+    --btn-del-hover-bg: rgba(239, 68, 68, 0.2);
+    --gradient-1: rgba(99, 102, 241, 0.15);
+    --gradient-2: rgba(139, 92, 246, 0.1);
+    --gradient-3: rgba(59, 130, 246, 0.08);
+    --footer-text: #475569;
+    --footer-link: #64748b;
+    --footer-link-hover: #a78bfa;
+    --footer-border: rgba(255, 255, 255, 0.06);
+}
+
+:root.light {
+    --bg: #f8fafc;
+    --text: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --text-faint: #94a3b8;
+    --text-secondary: #475569;
+    --accent: #7c3aed;
+    --accent-hover: #6d28d9;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --row-hover: rgba(0, 0, 0, 0.02);
+    --row-border: rgba(0, 0, 0, 0.05);
+    --th-border: rgba(0, 0, 0, 0.08);
+    --input-bg: rgba(0, 0, 0, 0.03);
+    --input-border: rgba(0, 0, 0, 0.1);
+    --input-focus: rgba(124, 58, 237, 0.5);
+    --input-focus-ring: rgba(124, 58, 237, 0.12);
+    --edit-border: rgba(124, 58, 237, 0.4);
+    --btn-edit-bg: rgba(0, 0, 0, 0.04);
+    --btn-edit-border: rgba(0, 0, 0, 0.08);
+    --btn-edit-text: #64748b;
+    --btn-edit-hover-bg: rgba(0, 0, 0, 0.08);
+    --btn-edit-hover-text: #334155;
+    --btn-del-bg: rgba(239, 68, 68, 0.08);
+    --btn-del-text: #dc2626;
+    --btn-del-border: rgba(239, 68, 68, 0.15);
+    --btn-del-hover-bg: rgba(239, 68, 68, 0.15);
+    --gradient-1: rgba(99, 102, 241, 0.08);
+    --gradient-2: rgba(139, 92, 246, 0.05);
+    --gradient-3: rgba(59, 130, 246, 0.04);
+    --footer-text: #94a3b8;
+    --footer-link: #64748b;
+    --footer-link-hover: #7c3aed;
+    --footer-border: rgba(0, 0, 0, 0.08);
+}
+
 body {
     font-family: "SF Mono", "Fira Code", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-    background: #0a0a0f;
-    color: #e2e8f0;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     padding: 40px 20px;
+    transition: background 0.3s, color 0.3s;
 }
 body::before {
     content: '';
@@ -13,9 +89,9 @@ body::before {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 40%, var(--gradient-1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, var(--gradient-2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, var(--gradient-3) 0%, transparent 50%);
     z-index: 0;
 }
 .container {
@@ -28,7 +104,7 @@ h1 {
     font-size: 28px;
     font-weight: 700;
     margin-bottom: 28px;
-    color: #f1f5f9;
+    color: var(--text-heading);
 }
 h1 span {
     background: linear-gradient(135deg, #818cf8, #a78bfa);
@@ -36,11 +112,33 @@ h1 span {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+}
+.header h1 { margin-bottom: 0; }
+.theme-toggle {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.15s;
+    color: var(--text);
+}
+.theme-toggle:hover {
+    background: var(--btn-edit-hover-bg);
+    transform: translateY(-1px);
+}
 .glass-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 24px;
     margin-bottom: 20px;
@@ -51,19 +149,19 @@ h1 span {
 }
 .add-form input {
     padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
     border-radius: 10px;
-    color: #e2e8f0;
+    color: var(--text);
     font-size: 14px;
     outline: none;
     transition: border-color 0.15s, box-shadow 0.15s;
 }
 .add-form input:focus {
-    border-color: rgba(139, 92, 246, 0.5);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    border-color: var(--input-focus);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
-.add-form input::placeholder { color: #475569; }
+.add-form input::placeholder { color: var(--text-faint); }
 .add-form input[name="phrase"] { width: 160px; }
 .add-form input[name="url"] { flex: 1; }
 button {
@@ -84,21 +182,21 @@ button {
     transform: translateY(-1px);
 }
 .btn-edit {
-    background: rgba(255, 255, 255, 0.06);
-    color: #94a3b8;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--btn-edit-bg);
+    color: var(--btn-edit-text);
+    border: 1px solid var(--btn-edit-border);
 }
 .btn-edit:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #e2e8f0;
+    background: var(--btn-edit-hover-bg);
+    color: var(--btn-edit-hover-text);
 }
 .btn-delete {
-    background: rgba(239, 68, 68, 0.1);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.15);
+    background: var(--btn-del-bg);
+    color: var(--btn-del-text);
+    border: 1px solid var(--btn-del-border);
 }
 .btn-delete:hover {
-    background: rgba(239, 68, 68, 0.2);
+    background: var(--btn-del-hover-bg);
 }
 .btn-save {
     background: linear-gradient(135deg, #22c55e, #16a34a);
@@ -113,52 +211,52 @@ th {
     padding: 10px 14px;
     text-align: left;
     font-weight: 500;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid var(--th-border);
 }
 td {
     padding: 12px 14px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid var(--row-border);
 }
 tr:hover td {
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--row-hover);
 }
 tr:last-child td { border-bottom: none; }
 td.actions { white-space: nowrap; text-align: right; }
 td.actions button { margin-left: 6px; }
 .phrase-link {
-    color: #c4b5fd;
+    color: var(--accent);
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
     transition: color 0.15s;
 }
-.phrase-link:hover { color: #e9d5ff; }
+.phrase-link:hover { color: var(--accent-hover); }
 .url-text {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 13px;
     word-break: break-all;
 }
 .edit-input {
     width: 100%;
     padding: 8px 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(139, 92, 246, 0.4);
+    background: var(--input-bg);
+    border: 1px solid var(--edit-border);
     border-radius: 8px;
-    color: #e2e8f0;
+    color: var(--text);
     font-size: 13px;
     outline: none;
 }
 .edit-input:focus {
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
 .empty {
     text-align: center;
     padding: 40px;
-    color: #475569;
+    color: var(--text-faint);
     font-size: 14px;
 }
 footer {
@@ -167,20 +265,20 @@ footer {
     max-width: 720px;
     margin: 40px auto 0;
     padding: 16px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-top: 1px solid var(--footer-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 12px;
-    color: #475569;
+    color: var(--footer-text);
 }
 footer a {
-    color: #64748b;
+    color: var(--footer-link);
     text-decoration: none;
     transition: color 0.15s;
 }
 footer a:hover {
-    color: #a78bfa;
+    color: var(--footer-link-hover);
 }
 .footer-links {
     display: flex;
@@ -190,10 +288,10 @@ footer a:hover {
 .footer-links svg {
     width: 16px;
     height: 16px;
-    fill: #64748b;
+    fill: var(--footer-link);
     transition: fill 0.15s;
     vertical-align: middle;
 }
 .footer-links a:hover svg {
-    fill: #a78bfa;
+    fill: var(--footer-link-hover);
 }

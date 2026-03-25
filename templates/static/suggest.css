@@ -1,13 +1,57 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #0a0a0f;
+    --text: #e2e8f0;
+    --text-heading: #f1f5f9;
+    --text-muted: #64748b;
+    --text-faint: #475569;
+    --text-secondary: #94a3b8;
+    --accent: #c4b5fd;
+    --accent-soft: #a78bfa;
+    --glass-bg: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --suggestion-bg: rgba(255, 255, 255, 0.03);
+    --suggestion-border: rgba(255, 255, 255, 0.06);
+    --suggestion-hover-bg: rgba(255, 255, 255, 0.07);
+    --suggestion-hover-border: rgba(139, 92, 246, 0.3);
+    --spinner-border: rgba(167, 139, 250, 0.3);
+    --gradient-1: rgba(99, 102, 241, 0.15);
+    --gradient-2: rgba(139, 92, 246, 0.1);
+    --gradient-3: rgba(59, 130, 246, 0.08);
+}
+
+:root.light {
+    --bg: #f8fafc;
+    --text: #334155;
+    --text-heading: #0f172a;
+    --text-muted: #64748b;
+    --text-faint: #94a3b8;
+    --text-secondary: #475569;
+    --accent: #7c3aed;
+    --accent-soft: #8b5cf6;
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --suggestion-bg: rgba(0, 0, 0, 0.02);
+    --suggestion-border: rgba(0, 0, 0, 0.06);
+    --suggestion-hover-bg: rgba(0, 0, 0, 0.04);
+    --suggestion-hover-border: rgba(124, 58, 237, 0.3);
+    --spinner-border: rgba(124, 58, 237, 0.3);
+    --gradient-1: rgba(99, 102, 241, 0.08);
+    --gradient-2: rgba(139, 92, 246, 0.05);
+    --gradient-3: rgba(59, 130, 246, 0.04);
+}
+
 body {
     font-family: "SF Mono", "Fira Code", "Cascadia Code", "JetBrains Mono", Menlo, Consolas, monospace;
-    background: #0a0a0f;
-    color: #e2e8f0;
+    background: var(--bg);
+    color: var(--text);
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    transition: background 0.3s, color 0.3s;
 }
 body::before {
     content: '';
@@ -16,9 +60,9 @@ body::before {
     left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    background: radial-gradient(circle at 30% 40%, var(--gradient-1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, var(--gradient-2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, var(--gradient-3) 0%, transparent 50%);
     z-index: 0;
 }
 .container {
@@ -29,16 +73,16 @@ body::before {
     padding: 0 20px;
 }
 .glass-card {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
     border-radius: 16px;
     padding: 40px;
 }
 .query-label {
     font-size: 13px;
-    color: #64748b;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 8px;
@@ -46,20 +90,20 @@ body::before {
 .query-phrase {
     font-size: 28px;
     font-weight: 700;
-    color: #f1f5f9;
+    color: var(--text-heading);
     margin-bottom: 6px;
 }
 .query-phrase span {
-    color: #64748b;
+    color: var(--text-muted);
     font-weight: 400;
 }
 .not-found-msg {
-    color: #94a3b8;
+    color: var(--text-secondary);
     font-size: 14px;
     margin-bottom: 32px;
 }
 .redirect-msg {
-    color: #a78bfa;
+    color: var(--accent-soft);
     font-size: 14px;
     margin-bottom: 24px;
     display: flex;
@@ -69,22 +113,22 @@ body::before {
 .redirect-msg .spinner {
     width: 16px;
     height: 16px;
-    border: 2px solid rgba(167, 139, 250, 0.3);
-    border-top-color: #a78bfa;
+    border: 2px solid var(--spinner-border);
+    border-top-color: var(--accent-soft);
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .redirect-msg a {
-    color: #64748b;
+    color: var(--text-muted);
     text-decoration: none;
     margin-left: auto;
     font-size: 13px;
 }
-.redirect-msg a:hover { color: #94a3b8; }
+.redirect-msg a:hover { color: var(--text-secondary); }
 .suggestions-label {
     font-size: 12px;
-    color: #64748b;
+    color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 12px;
@@ -92,41 +136,41 @@ body::before {
 .suggestion {
     display: block;
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: var(--suggestion-bg);
+    border: 1px solid var(--suggestion-border);
     border-radius: 10px;
     padding: 14px 18px;
     margin-bottom: 8px;
     transition: all 0.15s ease;
 }
 .suggestion:hover {
-    background: rgba(255, 255, 255, 0.07);
-    border-color: rgba(139, 92, 246, 0.3);
+    background: var(--suggestion-hover-bg);
+    border-color: var(--suggestion-hover-border);
     transform: translateY(-1px);
 }
 .suggestion-phrase {
     font-weight: 600;
-    color: #c4b5fd;
+    color: var(--accent);
     font-size: 15px;
     margin-bottom: 4px;
 }
 .suggestion-url {
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 12px;
     word-break: break-all;
 }
 .no-results {
     text-align: center;
-    color: #475569;
+    color: var(--text-faint);
     padding: 24px 0;
     font-size: 14px;
 }
 .home-link {
     display: inline-block;
     margin-top: 24px;
-    color: #64748b;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 13px;
     transition: color 0.15s;
 }
-.home-link:hover { color: #a78bfa; }
+.home-link:hover { color: var(--accent-soft); }

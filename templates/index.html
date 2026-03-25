@@ -7,8 +7,14 @@
     <link rel="stylesheet" href="/_/static/index.css">
 </head>
 <body>
+    <script>
+        if (localStorage.getItem('theme') === 'light') document.documentElement.classList.add('light');
+    </script>
     <div class="container">
-        <h1><span>go/links</span></h1>
+        <div class="header">
+            <h1><span>go/links</span></h1>
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme"></button>
+        </div>
 
         <div class="glass-card">
             <form class="add-form" onsubmit="return addLink(event)">
