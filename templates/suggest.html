@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="/_/static/suggest.css">
 </head>
 <body>
+    <script>
+        (function() {
+            var saved = localStorage.getItem('theme');
+            var isLight = saved ? saved === 'light' : window.matchMedia('(prefers-color-scheme: light)').matches;
+            if (isLight) document.documentElement.classList.add('light');
+        })();
+    </script>
     <div class="container">
         <div class="glass-card">
             <div class="query-label">Not Found</div>

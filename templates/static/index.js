@@ -1,3 +1,22 @@
+function toggleTheme() {
+    document.documentElement.classList.toggle('light');
+    const isLight = document.documentElement.classList.contains('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    updateToggleIcon();
+}
+function updateToggleIcon() {
+    const btn = document.querySelector('.theme-toggle');
+    const isLight = document.documentElement.classList.contains('light');
+    btn.textContent = isLight ? '\u2600\uFE0F' : '\uD83C\uDF19';
+}
+updateToggleIcon();
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function(e) {
+    if (!localStorage.getItem('theme')) {
+        document.documentElement.classList.toggle('light', e.matches);
+        updateToggleIcon();
+    }
+});
+
 async function addLink(e) {
     e.preventDefault();
     const form = e.target;
