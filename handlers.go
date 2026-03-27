@@ -2,9 +2,10 @@
 package main
 
 import (
-	_ "embed"
+	"embed"
 	"encoding/json"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"strings"
@@ -15,6 +16,9 @@ var indexHTML string
 
 //go:embed templates/suggest.html
 var suggestHTML string
+
+//go:embed templates/static
+var staticFS embed.FS
 
 var indexTmpl = template.Must(template.New("index").Parse(indexHTML))
 var suggestTmpl = template.Must(template.New("suggest").Parse(suggestHTML))
@@ -30,6 +34,9 @@ type suggestData struct {
 // NewServer creates an http.Handler with all routes configured.
 func NewServer(store *LinkStore) http.Handler {
 	mux := http.NewServeMux()
+
+	staticSub, _ := fs.Sub(staticFS, "templates/static")
+	mux.Handle("/_/static/", http.StripPrefix("/_/static/", http.FileServer(http.FS(staticSub))))
 
 	mux.HandleFunc("/_/api/links/", func(w http.ResponseWriter, r *http.Request) {
 		phrase := strings.TrimPrefix(r.URL.Path, "/_/api/links/")
